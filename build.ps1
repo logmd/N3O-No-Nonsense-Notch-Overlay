@@ -1,9 +1,17 @@
-$version = (Get-Date).ToString("yyMMdd__HH-mm-ss");
-wsl rm "module.version.*.ps1"
-wsl touch "module.version.$version.ps1"
-wsl ./build.sh $version
-adb push ../g_$version.zip /sdcard/a_mods/g_$version.zip
-# Start-Sleep -s 3
-# adb shell su -c magisk --install-module /sdcard/a_mods/g_$version.zip
-# Start-Sleep -s 5
-# adb reboot
+. _buildScripts\base36.ps1
+$version = 0
+$date = Get-Date
+$buildTime = convertTo-Base36 ([decimal]($date).ToString("ddHHmmss"))
+$buildDate = convertTo-Base36 ([decimal]($date).ToString("yyMM"))
+$buildNo = "$buildDate.$buildTime"
+$build = "N3O_v$version.$buildNo.zip"
+$buildName = "N3O v$version revision $buildNo"
+
+"building $buildName"
+
+$modProp = "./src/module.prop"
+copy-item -path module.prop.template -destination $modProp
+((Get-Content -path $modProp -Raw) -replace '_version_', "$buildName") | Set-Content -Path $modProp
+
+ wsl 7z a _release/$build ./src/*
+ adb push _release/$build /sdcard/a_mods/$build
