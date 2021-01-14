@@ -1,0 +1,4 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <bool name="config_fillMainBuiltInDisplayCutout_2K">true</bool>
+    <bool name="config_fillMainBuiltInDisplayCutout">true</bool>
+</resources>

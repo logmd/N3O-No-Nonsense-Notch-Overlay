@@ -1,0 +1,26 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- fhd settings -->
+    <!-- <string translatable="false" name="config_mainBuiltInDisplayCutout">M -475 0 L -400 1 Z M -540 0 Z</string>
+    <string translatable="false" name="config_mainBuiltInDisplayCutoutRectApproximation">@string/config_mainBuiltInDisplayCutout</string> -->
+
+    <!-- <string name="config_mainBuiltInDisplayCutout">M-391.0,60.0A33.0,33.0,0,0,1,-457.0,60.0A33.0,33.0,0,0,1,-391.0,60.0Z M -455,0 L -389,0 Z M -540,0 L -540,90 Z</string>
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation">@string/config_mainBuiltInDisplayCutout</string> -->
+    <bool name="config_fillMainBuiltInDisplayCutout">true</bool>
+
+    <string name="config_mainBuiltInDisplayCutout">M-391.0,60.0A33.0,33.0,0,0,1,-457.0,60.0A33.0,33.0,0,0,1,-391.0,60.0Z M -455,0 L -389,0 Z M -540,0 L -540,90 Z</string>
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation">@string/config_mainBuiltInDisplayCutout</string>
+
+    <!-- 2k settings  -->
+    <!-- <string translatable="false" name="config_mainBuiltInDisplayCutout_2K">M-391.0,60.0A33.0,33.0,0,0,1,-457.0,60.0A33.0,33.0,0,0,1,-391.0,60.0Z M -455,0 L -389,0 Z M -540,0 L -540,90 Z</string>
+    <string translatable="false" name="config_mainBuiltInDisplayCutoutRectApproximation_2K">@string/config_mainBuiltInDisplayCutout_2K</string> -->
+    <!-- <string name="config_mainBuiltInDisplayCutoutRectApproximation_2K">@string/config_mainBuiltInDisplayCutout_2K</string>
+    <string name="config_mainBuiltInDisplayCutout_2K" /> -->
+    <!-- <string name="config_mainBuiltInDisplayCutout">M -450 36 A 33 33 0 0 1 -530 49 A 33 33 0 0 1 -450 36 Z M -455 0 L -389 0 Z M -540 0 L -540 90 Z</string>
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation">@string/config_mainBuiltInDisplayCutout</string> -->
+    <bool name="config_fillMainBuiltInDisplayCutout_2K">true</bool>
+
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation_2K">@string/config_mainBuiltInDisplayCutout_2K</string>
+    <string name="config_mainBuiltInDisplayCutout_2K">M -525 79.5 A 41.5 41.5 0 0 1 -608 79.5 A 41.5 41.5 0 0 1 -525 79.5 Z M -608,0 L -525,0 Z M -720,0 L -720,121 Z</string>
+
+</resources>
