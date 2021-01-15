@@ -3,6 +3,10 @@
 ##################
 # Main functions #
 ##################
+set_api() {
+	[ $API = 29 ] && ACODE=10
+	[ $API = 30 ] && ACODE=11
+}
 
 build_apk() {
 	ui_print "  Creating ${1} overlay..."
@@ -38,10 +42,6 @@ pre_install() {
 	ZIPPATH=${MODPATH}/common/addon
 	set_perm ${ZIPPATH}/zipsigner 0 0 0755
 	set_perm ${ZIPPATH}/zipsigner-3.0-dexed.jar 0 0 0644
-}
-
-define_string() {
-	SVRLY="Overlay"
 }
 
 set_dir() {
@@ -120,7 +120,7 @@ mk_overlay() {
 	set_dir ${MODNAME}
 	INFIX = "$MODNAME"
 	DAPK=${PREFIX}${1}
-	FAPK=${PREFIX}${1}${SVRLY}
+	FAPK=${PREFIX}${1}Overlay
 
 	ui_print "overlay apk = $FAPK"
 
@@ -128,58 +128,101 @@ mk_overlay() {
 	sed -i "s|<vcde>|$ACODE|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|<modname>|${2}|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|_modname_|$MODNAME|" ${OVDIR}/res/values/strings.xml
-	
+
 	cat ${OVDIR}/AndroidManifest.xml
 	cat ${OVDIR}/res/values/strings.xml
 
 	build_apk "$MODNAME"
 }
 
-incompatibility_check
-pre_install
-define_string
+clean() {
+	ui_print "...cleaning up"
+	rm -rf $MODPATH/mods
+	ui_print "...Done!"
+	unmount_rw_stepdir
+}
 
-##############
-# User input #
-##############
-if [ -z $R ] || [ -z $T ] && [ -z $W ] || [ -z $CLR1 ] || [ -z $CLR2 ] || [ -z $TRP ] || [ -z $IMRS ] || [ -z $FULL ] || [ -z $H ] || [ -z $MIUISM ] || [ -z $NCK ] || [ -z $NCKQHD ]; then
-	ui_print "  _    ___   ___ __  __ ___   "
-	ui_print " | |  / _ \ / __|  \/  |   \  "
-	ui_print " | |_| (_) | (_ | |\/| | |) | "
-	ui_print " |____\___/ \___|_|  |_|___/  "
+api_runcheck() {
 
-else
-	ui_print "INSTALL VIA APP ONLY"
-	exit
-fi
+	ui_print "------------------------------------"
+	ui_print " You are Using Android $ACODE		  "
 
-#####################
-# Creating Overlays #
-#####################
-ui_print "  Overlays will be copied to ${STEPDIR}"
+	if [$ACODE != 11]; then
 
-[ $API = 29 ] && ACODE=10
-[ $API = 30 ] && ACODE=11
+		ui_print " "
+		ui_print " Android 10 or below is untested,  "
+		ui_print " Are you sure you want to continue?"
+		ui_print " "
+		ui_print " YES: vol + "
+		ui_print " NO : vol - "
+		ui_print " "
 
-MODDIR=${MODPATH}/mods/N3
-PREFIX="DisplayCutoutEmulation"
+		if chooseport 30; then
+			ui_print "YES!"
+			sleep 1
 
+			ui_print "well ..."
+			sleep 1
+			ui_print "... lets give it a shot then ;)"
+			sleep 2
 
-ui_print "--------------------------------------------"
+		else
+			ui_print "NO!??"
+			sleep 1
+			ui_print "... Why you here then? :p"
+			sleep 1
+			abort "... well i guess we should quit then!"
+		fi
 
-mk_overlay "nnn8pfhd" "nnn8pfhd"
+	fi
+	ui_print "------------------------------------"
+}
 
-ui_print "--------------------------------------------"
+start_install() {
+	incompatibility_check
+	pre_install
+	set_api
 
-mk_overlay "nnn8pqhd" "nnn8pqhd"
+	api_runcheck
 
-ui_print "--------------------------------------------"
+	ui_print "  Overlays will be copied to ${STEPDIR}"
 
+	MODDIR=${MODPATH}/mods/N3
+	PREFIX="DisplayCutoutEmulation"
 
-#############
-# Finishing #
-#############
+	ui_print "--------------------------------------------"
 
-rm -rf $MODPATH/mods
-ui_print "  Done..."
-unmount_rw_stepdir
+	mk_overlay "nnn8pfhd" "nnn8pfhd"
+
+	ui_print "--------------------------------------------"
+
+	mk_overlay "nnn8pqhd" "nnn8pqhd"
+
+	ui_print "--------------------------------------------"
+
+	clean
+}
+
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "  _    ___   ___ __  __ ___   "
+ui_print " | |  / _ \ / __|  \/  |   \  "
+ui_print " | |_| (_) | (_ | |\/| | |) | "
+ui_print " |____\___/ \___|_|  |_|___/  "
+ui_print ""
+ui_print "------------ N3O -------------"
+ui_print "-- No Nonsense Notch Overlay -"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+ui_print "------------------------------"
+
+start_install
