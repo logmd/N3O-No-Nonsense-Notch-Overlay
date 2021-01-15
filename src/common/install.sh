@@ -32,7 +32,7 @@ build_apk() {
 		abort "  The overlay was not copied, please send logs to the developer."
 	fi
 	ui_print "  "
-	ui_print "  ${1} overlay created!"
+	ui_print "  ${2} overlay created!"
 }
 
 pre_install() {
@@ -117,6 +117,8 @@ incompatibility_check() {
 mk_overlay() {
 	MODNAME="$1"
 	modnamelower = "$2"
+	moduleString = "$3"
+
 	set_dir ${MODNAME}
 	INFIX = "$MODNAME"
 	DAPK=${PREFIX}${1}
@@ -127,12 +129,12 @@ mk_overlay() {
 	sed -i "s|<vapi>|$API|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|<vcde>|$ACODE|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|<modname>|${2}|" ${OVDIR}/AndroidManifest.xml
-	sed -i "s|_modname_|$MODNAME|" ${OVDIR}/res/values/strings.xml
+	sed -i "s|_modname_|${3}|" ${OVDIR}/res/values/strings.xml
 
 	cat ${OVDIR}/AndroidManifest.xml
 	cat ${OVDIR}/res/values/strings.xml
 
-	build_apk "$MODNAME"
+	build_apk "$MODNAME" "$3"
 }
 
 clean() {
@@ -192,11 +194,11 @@ start_install() {
 
 	ui_print "--------------------------------------------"
 
-	mk_overlay "nnn8pfhd" "nnn8pfhd"
+	mk_overlay "nnn8pfhd" "nnn8pfhd" "N3O 8Pro FHD"
 
 	ui_print "--------------------------------------------"
 
-	mk_overlay "nnn8pqhd" "nnn8pqhd"
+	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O 8Pro QHD"
 
 	ui_print "--------------------------------------------"
 
