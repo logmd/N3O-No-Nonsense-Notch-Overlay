@@ -194,15 +194,15 @@ start_install() {
 
 	ui_print "--------------------------------------------"
 
-	mk_overlay "nnn8pfhd" "nnn8pfhd" "N3O 8Pro FHD"
+	mk_overlay "nnn8pfhd" "nnn8pfhd" "N3O 8Pro FHD+"
 
 	ui_print "--------------------------------------------"
 
-	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O 8Pro QHD"
+	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O 8Pro QHD+"
 
 	ui_print "--------------------------------------------"
 
-	mk_overlay "nnn8t" "nnn8t" "N3O 8T"
+	mk_overlay "nnn8t" "nnn8t" "N3O 8|8T|8Pro FHD+"
 
 	ui_print "--------------------------------------------"
 
