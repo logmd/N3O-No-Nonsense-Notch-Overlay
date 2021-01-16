@@ -1,0 +1,6 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <bool name="config_fillMainBuiltInDisplayCutout">true</bool>
+
+    <string name="config_mainBuiltInDisplayCutout">M 40 1 L 120 1 @left</string>
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation">M 0 0 h 136 v 1 h -136 Z @left</string>
+</resources>
