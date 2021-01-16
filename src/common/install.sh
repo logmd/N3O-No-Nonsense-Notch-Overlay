@@ -139,9 +139,11 @@ install_n3o() {
 
 	ui_print "INSTALLING overlays ..........."
 
-	mk_overlay "nnn8pfhd" "nnn8pfhd" "N3O 8Pro FHD"
-	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O 8Pro QHD"
-	mk_overlay "nnn8t" "nnn8t" "N3O 8 8T 8ProFHD"
+	mk_overlay "nnn8pfhd" "nnn8pfhd" "N3O Oneplus 8Pro FHD"
+	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O Oneplus 8Pro QHD"
+	mk_overlay "nnn8t" "nnn8t" "N3O Oneplus 8 8T 8ProFHD"
+	mk_overlay "pixel5" "pixel5" "N3O Pixel 5"
+
 
 	add_spacing 10
 }
