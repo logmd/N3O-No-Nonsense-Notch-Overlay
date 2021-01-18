@@ -2,9 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string translatable="false" name="display_cutout_emulation_overlay">LOGMD _modname_</string>
 
-    <string name="config_mainBuiltInDisplayCutout_2K">M -608 1 L -525 1 Z M -720 0 Z</string>
-    <string name="config_mainBuiltInDisplayCutoutRectApproximation_2K">@string/config_mainBuiltInDisplayCutout_2K</string>
-
-    <string name="config_mainBuiltInDisplayCutout">M -608 1 L -525 1 Z M -720 0 Z</string>
+   <string name="config_mainBuiltInDisplayCutout">M 0 0 h 173 v 1 h -173 Z @left</string>
     <string name="config_mainBuiltInDisplayCutoutRectApproximation">@string/config_mainBuiltInDisplayCutout</string>
 </resources>
