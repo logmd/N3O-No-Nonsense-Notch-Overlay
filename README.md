@@ -56,16 +56,9 @@ M -475 1 L -407 1 Z M -540 0 L -540 0 Z
 
 ## Customisation
 
-- create a file called `custom.txt`
-- populate it with an svg path value like so `M 0 0 h 170 v 1 h -170 Z`
-- put it on the sdcard in the location `/sdcard/com.logmd.n3o/custom.txt`
-- install a build of `v0.1MD.APWH8` or above and it will create a cutout called __LOGMD N3O Custom__ in display cutout developer settings
-
-### change custom value
-- use a site like [svg path editor](https://yqnn.github.io/svg-path-editor/) and paste in `M 0 0 h 170 v 1 h -170 Z` to view and visually modify the cutout created.
-- the values are alighned from the left top edge of the device
-- the values `170` and `-170` must stay in sync and represent the number of pixels width of your "virtual" cutout.
-- simply recreate the `custom.txt`file and reinstall the latest module and it should be updated after a reboot
+- first installation creates 3 files `custom1.txt` `custom2.txt` and `custom3.txt` inside the folder `/sdcard/com.logmd.n3o/`
+- edit either file and replace with desired number of pixels for your custom cutout.. e.g. edit `custom1.txt` with root explorer, make the value `125` and save
+- reinstall the module then reboot :)
 
 
 ## Credits
