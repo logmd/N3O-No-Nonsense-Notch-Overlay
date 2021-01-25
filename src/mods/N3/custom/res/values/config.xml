@@ -1,6 +1,0 @@
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <bool name="config_fillMainBuiltInDisplayCutout">true</bool>
-
-    <string translatable="false" name="config_mainBuiltInDisplayCutout">_customMainDisplayCutout_ @left</string>
-    <string translatable="false" name="config_mainBuiltInDisplayCutoutRectApproximation">@string/config_mainBuiltInDisplayCutout</string>
-</resources>
