@@ -155,13 +155,13 @@ mk_overlay() {
 	add_spacing
 
 	MODNAME="$1"
-	ui_print "modname ${MODNAME} ${1}"
+	ui_print "modname ${MODNAME} ${1}, modstring ${3}, cutout '${4}'"
 
-	ui_print "modnamelower ${2}"
-
-	ui_print "modstring ${3}"
+	ui_print "copying '${MODDIR}/overlay' to '${MODDIR}/${MODNAME}/'"
+	cp -rf ${MODDIR}/overlay ${MODDIR}/${MODNAME}/
 
 	set_dir ${MODNAME}
+
 	INFIX = "$MODNAME"
 	DAPK=${PREFIX}${1}
 	FAPK="${PREFIX}${1}Overlay"
@@ -172,6 +172,8 @@ mk_overlay() {
 	sed -i "s|<vcde>|$ACODE|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|<modname>|${2}|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|_modname_|${3}|" ${OVDIR}/res/values/strings.xml
+	sed -i "s|_cutout_|${4}|" ${OVDIR}/res/values/config.xml
+
 
 	ui_print "overlay apk = $FAPK replaced variables"
 
@@ -181,6 +183,10 @@ mk_overlay() {
 }
 
 install_n3o() {
+	local pixel5="M 0 0 h 136 v 1 h -136 Z @left"
+	local op8="M 0 0 h 130 v 1 h -130 Z @left"
+	local op8pqhd="M 0 0 h 173 v 1 h -173 Z @left"
+
 	print_branding
 
 	incompatibility_check
@@ -195,10 +201,10 @@ install_n3o() {
 	PREFIX="DisplayCutoutEmulation"
 
 	ui_print "INSTALLING overlays ..........."
-	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O OnePlus 8ProQHD"
-	mk_overlay "nnn8t" "nnn8t" "N3O OnePlus 8 8T 8ProFHD"
-	mk_overlay "pixel5" "pixel5" "N3O Pixel 5"
-	mk_overlay_custom
+	mk_overlay "overlay_nnn8pqhd" "nnn8pqhd" "N3O OnePlus 8ProQHD" "${op8pqhd}"
+	mk_overlay "overlay_nnn8t" "nnn8t" "N3O OnePlus 8 8T 8ProFHD" "${op8}"
+	mk_overlay "overlay_pixel5" "pixel5" "N3O Pixel 5" "${pixel5}"
+	# mk_overlay_custom
 
 	add_spacing 10
 }
