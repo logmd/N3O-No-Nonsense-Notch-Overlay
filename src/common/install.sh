@@ -92,76 +92,19 @@ set_dir() {
 # Main NCK #
 ############
 
-mk_overlay_custom() {
-	local custom_location='/sdcard/com.logmd.n3o/'
-	local default_custom_file="${custom_location}custom.txt"
-	local customMainDisplayCutoutVar="_customMainDisplayCutout_"
-
-	add_spacing 2
-	ui_print "building custom overlay from $custom_location *"
-	add_spacing 2
-
-	ui_print "listing var"
-	ls $custom_location
-
-	ui_print "location: $custom_location, default: $default_custom_file"
-	ui_print "- looking for custom overlay files"
-
-	if [ ! -s "${default_custom_file}" ]; then
-		ui_print "custom overlay config not found"
-		return
-	fi
-
-	ui_print "custom overlay found.. printing your cutout"
-
-	local overlayValue=$(cat $default_custom_file)
-	ui_print "$overlayValue"
-
-	ui_print "creating custom overlay (forced @left)"
-
-	add_spacing 10
-	ui_print "	making overlay apk for custom"
-	add_spacing
-
-	MODNAME="custom"
-
-	set_dir ${MODNAME}
-	INFIX = "$MODNAME"
-	DAPK=${PREFIX}Custom
-	FAPK="${PREFIX}CustomOverlay"
-
-	ui_print "overlay apk = $FAPK"
-
-	sed -i "s|<vapi>|$API|" ${OVDIR}/AndroidManifest.xml
-	sed -i "s|<vcde>|$ACODE|" ${OVDIR}/AndroidManifest.xml
-	sed -i "s|<modname>|custom|" ${OVDIR}/AndroidManifest.xml
-	sed -i "s|_modname_|N3O Custom|" ${OVDIR}/res/values/strings.xml
-	sed -i "s|_customMainDisplayCutout_|${overlayValue}|" ${OVDIR}/res/values/config.xml
-
-	cat ${OVDIR}/AndroidManifest.xml
-	cat ${OVDIR}/res/values/strings.xml
-	cat ${OVDIR}/res/values/config.xml
-
-	ui_print "overlay apk = $FAPK replaced variables"
-
-	ls -R ${OVDIR}/
-
-	build_apk "$MODNAME" "N3O Custom"
-}
-
 mk_overlay() {
 	add_spacing 10
 	ui_print "	making overlay apk for $3"
 	add_spacing
 
 	MODNAME="$1"
-	ui_print "modname ${MODNAME} ${1}"
+	ui_print "modname ${MODNAME} ${1}, modstring ${3}, cutout '${4}'"
 
-	ui_print "modnamelower ${2}"
-
-	ui_print "modstring ${3}"
+	ui_print "copying '${MODDIR}/overlay' to '${MODDIR}/${MODNAME}/'"
+	cp -rf ${MODDIR}/overlay ${MODDIR}/${MODNAME}/
 
 	set_dir ${MODNAME}
+
 	INFIX = "$MODNAME"
 	DAPK=${PREFIX}${1}
 	FAPK="${PREFIX}${1}Overlay"
@@ -172,6 +115,8 @@ mk_overlay() {
 	sed -i "s|<vcde>|$ACODE|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|<modname>|${2}|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|_modname_|${3}|" ${OVDIR}/res/values/strings.xml
+	sed -i "s|_cutout_|${4}|" ${OVDIR}/res/values/config.xml
+
 
 	ui_print "overlay apk = $FAPK replaced variables"
 
@@ -180,7 +125,31 @@ mk_overlay() {
 	build_apk "$MODNAME" "$3"
 }
 
+install_n3o_custom() {
+	local iteration="$1"
+	local defaultValue="$2"
+
+	local custom="M 0 0 h _size_ v 1 h -_size_ Z @left"
+	local custom_location='/sdcard/com.logmd.n3o/'
+	local custom_file="${custom_location}${iteration}.txt"
+	
+	if [ ! -s "${custom_file}" ]; then
+		ui_print "custom overlay $iteration txt not found, creating ${custom_file} with value ${defaultValue}px"
+		mkdir $custom_location
+		echo $defaultValue > $custom_file
+		cat $custom_file
+	fi
+
+	local overlayValue=$(cat $custom_file)
+	ui_print "found custom config with ${overlayValue}px"
+
+	mk_overlay "overlay_${iteration}" "${iteration}" "N30 ${iteration} (${overlayValue}px)" "${custom//_size_/${overlayValue}}"
+}
+
 install_n3o() {
+	local pixel5="M 0 0 h 136 v 1 h -136 Z @left"
+	local op8="M 0 0 h 130 v 1 h -130 Z @left"
+	local op8pqhd="M 0 0 h 173 v 1 h -173 Z @left"
 	print_branding
 
 	incompatibility_check
@@ -195,10 +164,13 @@ install_n3o() {
 	PREFIX="DisplayCutoutEmulation"
 
 	ui_print "INSTALLING overlays ..........."
-	mk_overlay "nnn8pqhd" "nnn8pqhd" "N3O OnePlus 8ProQHD"
-	mk_overlay "nnn8t" "nnn8t" "N3O OnePlus 8 8T 8ProFHD"
-	mk_overlay "pixel5" "pixel5" "N3O Pixel 5"
-	mk_overlay_custom
+	mk_overlay "overlay_nnn8pqhd" "nnn8pqhd" "N3O OnePlus 8ProQHD" "${op8pqhd}"
+	mk_overlay "overlay_nnn8t" "nnn8t" "N3O OnePlus 8 8T 8ProFHD" "${op8}"
+	mk_overlay "overlay_pixel5" "pixel5" "N3O Pixel 5" "${pixel5}"
+
+	install_n3o_custom "custom1" "100"
+	install_n3o_custom "custom2" "150"
+	install_n3o_custom "custom3" "200"
 
 	add_spacing 10
 }
