@@ -20,7 +20,7 @@ add_spacing() {
 	ui_print ""
 	local i=0
 	for i in $(seq 1 $iterations); do
-		ui_print "------------------------------------------------"
+		ui_print "-----------------------------------------------------"
 	done
 	ui_print ""
 }
@@ -35,7 +35,7 @@ log_build_directories() {
 }
 
 build_apk() {
-	ui_print "  Creating ${1} overlay..."
+	ui_print "...	[APK] Generating overlay..."
 
 	aapt p -f -M ${OVDIR}/AndroidManifest.xml \
 		-I /system/framework/framework-res.apk -S ${OVDIR}/res/ \
@@ -47,12 +47,12 @@ build_apk() {
 
 		[ ! -s ${OVDIR}/signed.apk ] && cp -rf ${OVDIR}/unsigned.apk ${MODDIR}/${FAPK}.apk
 
-		log_build_directories
+		# log_build_directories
 
 		rm -rf ${OVDIR}/signed.apk ${OVDIR}/unsigned.apk
 	else
-		ui_print "  Overlay not created!"
-		abort "  This is generally a rom incompatibility,"
+		ui_print "!!!	Overlay not created!"
+		abort "!!!	This is generally a rom incompatibility,"
 	fi
 
 	cp_ch -r ${MODDIR}/${FAPK}.apk ${STEPDIR}/${DAPK}
@@ -60,10 +60,10 @@ build_apk() {
 	if [ -s ${STEPDIR}/${DAPK}/${FAPK}.apk ]; then
 		:
 	else
-		abort "  The overlay was not copied, please send logs to the developer."
+		abort "!!!	The overlay was not copied, please send logs to the developer."
 	fi
-	ui_print "  "
-	ui_print "  ${2} overlay created!"
+
+	ui_print "✓		[APK] Generated!"
 }
 
 pre_install() {
@@ -76,9 +76,9 @@ pre_install() {
 }
 
 post_install_cleanup() {
-	ui_print "...post install cleanup"
+	ui_print "...	post install cleanup"
 	rm -rf $MODPATH/mods
-	ui_print "...Done!"
+	ui_print "✓		Done!"
 	unmount_rw_stepdir
 }
 
@@ -88,19 +88,24 @@ set_dir() {
 	DRWDIR=${OVDIR}/res/drawable
 }
 
-############
-# Main NCK #
-############
+run_checks() {
+
+	incompatibility_check
+	pre_install
+	set_api
+	api_runcheck
+}
 
 mk_overlay() {
-	add_spacing 10
-	ui_print "	making overlay apk for $3"
-	add_spacing
+	MODDIR=${MODPATH}/mods/N3
+	PREFIX="DisplayCutoutEmulation"
+
+	ui_print "...	[APK] Preparing install $3"
 
 	MODNAME="$1"
-	ui_print "modname ${MODNAME} ${1}, modstring ${3}, cutout '${4}'"
+	# ui_print "modname ${MODNAME} ${1}, modstring ${3}, cutout '${4}'"
 
-	ui_print "copying '${MODDIR}/overlay' to '${MODDIR}/${MODNAME}/'"
+	# ui_print "copying '${MODDIR}/overlay' to '${MODDIR}/${MODNAME}/'"
 	cp -rf ${MODDIR}/overlay ${MODDIR}/${MODNAME}/
 
 	set_dir ${MODNAME}
@@ -109,7 +114,7 @@ mk_overlay() {
 	DAPK=${PREFIX}${1}
 	FAPK="${PREFIX}${1}Overlay"
 
-	ui_print "overlay apk = $FAPK"
+	# ui_print "overlay apk = $FAPK"
 
 	sed -i "s|<vapi>|$API|" ${OVDIR}/AndroidManifest.xml
 	sed -i "s|<vcde>|$ACODE|" ${OVDIR}/AndroidManifest.xml
@@ -117,10 +122,9 @@ mk_overlay() {
 	sed -i "s|_modname_|${3}|" ${OVDIR}/res/values/strings.xml
 	sed -i "s|_cutout_|${4}|" ${OVDIR}/res/values/config.xml
 
+	# ui_print "overlay apk = $FAPK replaced variables"
 
-	ui_print "overlay apk = $FAPK replaced variables"
-
-	ls -R ${OVDIR}/
+	# ls -R ${OVDIR}/
 
 	build_apk "$MODNAME" "$3"
 }
@@ -128,51 +132,109 @@ mk_overlay() {
 install_n3o_custom() {
 	local iteration="$1"
 	local defaultValue="$2"
-
-	local custom="M 0 0 h _size_ v 1 h -_size_ Z @left"
+	local cutoutPosition="$3"
 	local custom_location='/sdcard/com.logmd.n3o/'
-	local custom_file="${custom_location}${iteration}.txt"
-	
+	local custom_file="${custom_location}${iteration}${cutoutPosition}.txt"
+
+	add_spacing 1
+
 	if [ ! -s "${custom_file}" ]; then
-		ui_print "custom overlay $iteration txt not found, creating ${custom_file} with value ${defaultValue}px"
+		ui_print "...	[Custom] Overlay ${iteration}${cutoutPosition} txt not found"
+		ui_print "...	[Custom] Creating ${custom_file} "
+		ui_print "...	[Custom] with value ${cutoutPosition} ${defaultValue}px"
+
 		mkdir $custom_location
-		echo $defaultValue > $custom_file
-		cat $custom_file
+		echo $defaultValue >$custom_file
 	fi
 
 	local overlayValue=$(cat $custom_file)
-	ui_print "found custom config with ${overlayValue}px"
 
-	mk_overlay "overlay_${iteration}" "${iteration}" "N30 ${iteration} (${overlayValue}px)" "${custom//_size_/${overlayValue}}"
+	ui_print "...	[Custom] Found ${iteration} config with ${cutoutPosition} ${overlayValue}px"
+
+	local custom="M 0 0 h ${overlayValue} v 1 h -${overlayValue} Z @left"
+
+	case $cutoutPosition in
+	"right")
+		custom="M 0 0 h -${overlayValue} v 1 h ${overlayValue} Z @right"
+		;;
+	"center")
+		custom="M -${overlayValue} 0 h $(($overlayValue*2)) v 1 h -$(($overlayValue*2)) Z"
+		;;
+	esac
+
+	ui_print "... [Custom] Generated Cutout: "
+	ui_print "... [Custom] ${custom}"
+
+	ui_print ""
+	mk_overlay "overlay_${iteration}${cutoutPosition}" "n3o.a.cst.${iteration}${cutoutPosition}" "CST ${cutoutPosition} ${iteration} (${overlayValue}px)" "${custom}"
+}
+
+install_n3o_preset() {
+	local name="${1}"
+	local cutoutWidth="${3}"
+	local title="${2}"
+	local cutoutPosition="${4}"
+
+	local cutout="M 0 0 h ${cutoutWidth} v 1 h -${cutoutWidth} Z @${cutoutPosition}"
+	local titleWithPx="${title} (${cutoutWidth}px)"
+
+	add_spacing 1
+	ui_print "?		Install ${titleWithPx}?"
+	ui_print "?		"
+	ui_print "?		Yes (vol+)  |  NO (vol-)"
+	ui_print ""
+
+	if chooseport 30; then
+		mk_overlay "overlay_${name}" "${name}" "${titleWithPx}" "${cutout}"
+	fi
 }
 
 install_n3o() {
-	local pixel5="M 0 0 h 136 v 1 h -136 Z @left"
-	local op8="M 0 0 h 130 v 1 h -130 Z @left"
-	local op8pqhd="M 0 0 h 173 v 1 h -173 Z @left"
 	print_branding
 
-	incompatibility_check
-	pre_install
-	set_api
+	run_checks
 
-	api_runcheck
+	ui_print "...	Overlays will be copied to"
+	ui_print "...	${STEPDIR}"
+	ui_print "...	INSTALLING overlays..."
 
-	ui_print "  Overlays will be copied to ${STEPDIR}"
+	install_n3o_preset "n3o.google.pixel5" "[Google] Pixel 5" 135 "left"
+	install_n3o_preset "n3o.oneplus.op8" "[1+] 8, 8T, 8Pro FHD+" 130 "left"
+	install_n3o_preset "n3o.oneplus.op8pqhd" "[1+] 8 Pro QHD+" 170 "left"
 
-	MODDIR=${MODPATH}/mods/N3
-	PREFIX="DisplayCutoutEmulation"
+	add_spacing 1
+	ui_print "?		Install Custom Cutouts (Left & Right)?"
+	ui_print "?		"
+	ui_print "?		Yes (vol+)  |  NO (vol-)"
+	ui_print ""
 
-	ui_print "INSTALLING overlays ..........."
-	mk_overlay "overlay_nnn8pqhd" "nnn8pqhd" "N3O OnePlus 8ProQHD" "${op8pqhd}"
-	mk_overlay "overlay_nnn8t" "nnn8t" "N3O OnePlus 8 8T 8ProFHD" "${op8}"
-	mk_overlay "overlay_pixel5" "pixel5" "N3O Pixel 5" "${pixel5}"
+	add_spacing 1
 
-	install_n3o_custom "custom1" "100"
-	install_n3o_custom "custom2" "150"
-	install_n3o_custom "custom3" "200"
+	if chooseport 30; then
 
-	add_spacing 10
+		install_n3o_custom "custom1" "100" "left"
+		install_n3o_custom "custom2" "150" "left"
+
+		install_n3o_custom "custom1" "100" "right"
+		install_n3o_custom "custom2" "150" "right"
+
+		install_n3o_custom "custom1" "30" "center"
+
+		add_spacing 3
+
+		ui_print "================= USING CUSTOM CUTOUTS ================="
+		ui_print ""
+		ui_print "...	- Update /sdcard/com.logmd.n3o/custom1left.txt"
+		ui_print "...	  (or custom2/3) to adjust cutout width"
+		ui_print "..."
+		ui_print "...	- Use custom1right for right side cutout"
+		ui_print "..."
+		ui_print "...	- Re-install & reboot to tweak cutout"
+		ui_print ""
+		ui_print "========================================================"
+	fi
+
+	add_spacing 5
 }
 
 install_n3o
