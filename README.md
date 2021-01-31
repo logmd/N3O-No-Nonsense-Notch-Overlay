@@ -19,11 +19,26 @@ Presets for the following devices, but you can create a custom cutout for any de
 - Google 
   - Pixel 5
 
-## Customisation
+## How to install
+1. know how to recover device safely after failed magisk module!
+2. install module via zip or magisk repo
+3. select your presets
+4. select if you want custom cutouts
+5. reboot
+5. go to settings and change `Display Cutout` from default to any of the `N3O` cutouts
 
-- first installation creates 3 files `custom1.txt` `custom2.txt` and `custom3.txt` inside the folder `/sdcard/com.logmd.n3o/`
-- edit either file and replace with desired number of pixels for your custom cutout.. e.g. edit `custom1.txt` with root explorer, make the value `125` and save
+## Customisation
+- first installation will ask if you want custom files
+- select yes if you wish to alter the cutout width OR if the presets above dont match your device and __DO NOT REBOOT__ (this just saves time)
+- files will be located in `/sdcard/com.logmd.n3o/` use a file editor like "root explorer" or "es explorer" to edit them
+  - for top left cutouts there are 2 files `custom1left.txt` and `custom2left.txt`
+  - for top right cutouts there are 2 files named like above, but `right`
+  - for center cutouts there is 1 file with `center` in its name, this is experimental and may not work
+- only enter whole numbers e.g. 1, 3, 100.
+- this number is in pixels
 - reinstall the module then reboot :)
+
+warning: Take care here, incorrect values can cause systemui failures, or worse bootloops. know how to get out of this BEFORE you try to install
 
 ## Compatibility
 
@@ -57,6 +72,8 @@ M -475 1 L -407 1 Z M -540 0 L -540 0 Z
 <img width="200" src="https://gist.github.com/logmd/2ecc3ede43a7d3e318f4740c4a5f3c0c/raw/op8t-cutout-removed.svg">
 
 
+#
+
 i have simplified the above process but the gist is the same :)
 
 # Credits
@@ -66,3 +83,5 @@ i have simplified the above process but the gist is the same :)
 - <a href="https://github.com/topjohnwu">topjohnwu</a> for entire Magisk universe.
 - <a href="https://github.com/skittles9823">skittles9823</a> for helping me.
 - All the testers and xda for providing a platform to test on
+
+
