@@ -10,6 +10,9 @@
 set_api() {
 	[ $API = 29 ] && ACODE=10
 	[ $API = 30 ] && ACODE=11
+	[ $API = 31 ] && ACODE=12
+	[ $API = 32 ] && ACODE=12
+	[ $API = 33 ] && ACODE=13
 }
 
 add_spacing() {
@@ -158,7 +161,7 @@ install_n3o_custom() {
 		custom="M 0 0 h -${overlayValue} v 1 h ${overlayValue} Z @right"
 		;;
 	"center")
-		custom="M -${overlayValue} 0 h $(($overlayValue*2)) v 1 h -$(($overlayValue*2)) Z"
+		custom="M -${overlayValue} 0 h $(($overlayValue * 2)) v 1 h -$(($overlayValue * 2)) Z"
 		;;
 	esac
 
